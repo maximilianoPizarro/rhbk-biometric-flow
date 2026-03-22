@@ -27,6 +27,8 @@ neuroface:
   backendPort: 8080
   internalUrl: ""
 
+  fullnameOverride: "neuroface"
+
   # -- NeuroFace subchart default values (override as needed)
   backend:
     image:
