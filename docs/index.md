@@ -19,32 +19,32 @@ title: RHBK NeuroFace Biometric Flow
 
 <div class="container">
 
-<h2>Demo Videos</h2>
+<h2>Demo — Biometric Authentication Flow</h2>
 
 <div class="video-section">
-<div class="video-grid">
-
-<div class="video-card">
-  <div class="video-wrapper shorts">
-    <iframe src="https://www.youtube.com/embed/_PcsflxvJWY" title="RHBK Biometric Flow - Short Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-  <div class="video-info">
-    <h4>Biometric Authentication Flow</h4>
-    <p>Quick demo of the delegated creation and 2FA facial recognition flow with RHBK and NeuroFace</p>
-  </div>
-</div>
-
-<div class="video-card">
-  <div class="video-wrapper">
-    <iframe src="https://www.youtube.com/embed/lvFu5u7slXg" title="NeuroFace - Facial Recognition Usage" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-  <div class="video-info">
-    <h4>NeuroFace — Facial Recognition in Action</h4>
-    <p>Full walkthrough of the NeuroFace webapp: training, recognition, and model configuration</p>
+  <div class="video-card" style="max-width: 360px; margin: 0 auto;">
+    <div class="video-wrapper shorts">
+      <iframe src="https://www.youtube.com/embed/_PcsflxvJWY" title="RHBK Biometric Flow - Short Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-info">
+      <h4>Biometric Authentication Flow</h4>
+      <p>Quick demo of the delegated creation and 2FA facial recognition flow with RHBK and NeuroFace</p>
+    </div>
   </div>
 </div>
 
-</div>
+<h2>Demo — NeuroFace Facial Recognition</h2>
+
+<div class="video-section">
+  <div class="video-card" style="max-width: 800px; margin: 0 auto;">
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/lvFu5u7slXg" title="NeuroFace - Facial Recognition Usage" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-info">
+      <h4>NeuroFace — Facial Recognition in Action</h4>
+      <p>Full walkthrough of the NeuroFace webapp: training, recognition, and model configuration</p>
+    </div>
+  </div>
 </div>
 
 <h2>Overview</h2>
@@ -120,13 +120,18 @@ title: RHBK NeuroFace Biometric Flow
 
 <h3>API Endpoints Used by the SPI</h3>
 
-| Endpoint | Method | Usage |
-|----------|--------|-------|
-| `/api/health` | `GET` | Health check before biometric operations |
-| `/api/images` | `POST` | Upload facial images during enrollment (multipart) |
-| `/api/train` | `POST` | Train the recognition model after enrollment |
-| `/api/recognize` | `POST` | Verify facial identity during 2FA login |
-| `/api/labels` | `GET` | List registered biometric labels |
+<table>
+  <thead>
+    <tr><th>Endpoint</th><th>Method</th><th>Usage</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/api/health</code></td><td><code>GET</code></td><td>Health check before biometric operations</td></tr>
+    <tr><td><code>/api/images</code></td><td><code>POST</code></td><td>Upload facial images during enrollment (multipart)</td></tr>
+    <tr><td><code>/api/train</code></td><td><code>POST</code></td><td>Train the recognition model after enrollment</td></tr>
+    <tr><td><code>/api/recognize</code></td><td><code>POST</code></td><td>Verify facial identity during 2FA login</td></tr>
+    <tr><td><code>/api/labels</code></td><td><code>GET</code></td><td>List registered biometric labels</td></tr>
+  </tbody>
+</table>
 
 <h2>Authentication Flows</h2>
 
@@ -178,113 +183,145 @@ User ──► Login page ──► username + password
 
 <div class="install-box">
 <h4>From Helm Repository</h4>
-
-```bash
-helm repo add rhbk-neuroface https://maximilianopizarro.github.io/rhbk-biometric-flow/
+<pre><code>helm repo add rhbk-neuroface https://maximilianopizarro.github.io/rhbk-biometric-flow/
 helm repo update
 
 helm install rhbk-neuroface rhbk-neuroface/rhbk-neuroface \
   -n neuroface --create-namespace \
-  --set admin.password=changeme
-```
+  --set admin.password=changeme</code></pre>
 </div>
 
 <div class="install-box">
 <h4>From Source</h4>
-
-```bash
-git clone https://github.com/maximilianoPizarro/rhbk-biometric-flow.git
+<pre><code>git clone https://github.com/maximilianoPizarro/rhbk-biometric-flow.git
 cd rhbk-biometric-flow
 
 helm dependency update helm/rhbk-neuroface
 helm install rhbk-neuroface ./helm/rhbk-neuroface \
   -n neuroface --create-namespace \
-  --set admin.password=changeme
-```
+  --set admin.password=changeme</code></pre>
 </div>
 
 <h2>Helm Chart Values</h2>
 
 <h3>RHBK (Keycloak)</h3>
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `rhbk.image.repository` | `registry.redhat.io/rhbk/keycloak-rhel9` | RHBK image |
-| `rhbk.image.tag` | `26.0` | Image tag |
-| `rhbk.replicas` | `1` | Replicas |
-| `rhbk.resources.limits.cpu` | `1` | CPU limit |
-| `rhbk.resources.limits.memory` | `1Gi` | Memory limit |
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>rhbk.image.repository</code></td><td><code>registry.redhat.io/rhbk/keycloak-rhel9</code></td><td>RHBK image</td></tr>
+    <tr><td><code>rhbk.image.tag</code></td><td><code>26.0</code></td><td>Image tag</td></tr>
+    <tr><td><code>rhbk.replicas</code></td><td><code>1</code></td><td>Replicas</td></tr>
+    <tr><td><code>rhbk.resources.limits.cpu</code></td><td><code>1</code></td><td>CPU limit</td></tr>
+    <tr><td><code>rhbk.resources.limits.memory</code></td><td><code>1Gi</code></td><td>Memory limit</td></tr>
+  </tbody>
+</table>
 
-<h3>Admin & Realm</h3>
+<h3>Admin &amp; Realm</h3>
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `admin.username` | `admin` | Bootstrap admin user |
-| `admin.password` | `admin` | Bootstrap admin password |
-| `realm.name` | `neuroface` | Realm name |
-| `realm.displayName` | `NeuroFace Biometric` | Display name |
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>admin.username</code></td><td><code>admin</code></td><td>Bootstrap admin user</td></tr>
+    <tr><td><code>admin.password</code></td><td><code>admin</code></td><td>Bootstrap admin password</td></tr>
+    <tr><td><code>realm.name</code></td><td><code>neuroface</code></td><td>Realm name</td></tr>
+    <tr><td><code>realm.displayName</code></td><td><code>NeuroFace Biometric</code></td><td>Display name</td></tr>
+  </tbody>
+</table>
 
 <h3>Biometric Settings</h3>
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `biometric.confidenceThreshold` | `65.0` | Minimum confidence (0-100) |
-| `biometric.maxEnrollmentImages` | `5` | Max enrollment images |
-| `biometric.webcamWidth` | `640` | Webcam width (px) |
-| `biometric.webcamHeight` | `480` | Webcam height (px) |
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>biometric.confidenceThreshold</code></td><td><code>65.0</code></td><td>Minimum confidence (0-100)</td></tr>
+    <tr><td><code>biometric.maxEnrollmentImages</code></td><td><code>5</code></td><td>Max enrollment images</td></tr>
+    <tr><td><code>biometric.webcamWidth</code></td><td><code>640</code></td><td>Webcam width (px)</td></tr>
+    <tr><td><code>biometric.webcamHeight</code></td><td><code>480</code></td><td>Webcam height (px)</td></tr>
+  </tbody>
+</table>
 
 <h3>SPI Image</h3>
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `spi.image.repository` | `quay.io/maximilianopizarro/rhbk-neuroface-spi` | SPI image |
-| `spi.image.tag` | `latest` | Tag |
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>spi.image.repository</code></td><td><code>quay.io/maximilianopizarro/rhbk-neuroface-spi</code></td><td>SPI image</td></tr>
+    <tr><td><code>spi.image.tag</code></td><td><code>latest</code></td><td>Tag</td></tr>
+  </tbody>
+</table>
 
 <h3>NeuroFace Subchart Overrides</h3>
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `neuroface.enabled` | `true` | Deploy NeuroFace subchart |
-| `neuroface.backend.image.tag` | `latest` | Backend image tag |
-| `neuroface.backend.replicas` | `1` | Backend replicas |
-| `neuroface.backend.aiModel` | `lbph` | AI model (`lbph` / `dlib`) |
-| `neuroface.frontend.image.tag` | `latest` | Frontend image tag |
-| `neuroface.frontend.replicas` | `1` | Frontend replicas |
-| `neuroface.chat.enabled` | `true` | Enable AI chat feature |
-| `neuroface.persistence.enabled` | `true` | Enable persistent storage |
-| `neuroface.persistence.size` | `1Gi` | PVC size |
-| `neuroface.route.enabled` | `true` | Create NeuroFace Route |
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>neuroface.enabled</code></td><td><code>true</code></td><td>Deploy NeuroFace subchart</td></tr>
+    <tr><td><code>neuroface.backend.image.tag</code></td><td><code>latest</code></td><td>Backend image tag</td></tr>
+    <tr><td><code>neuroface.backend.replicas</code></td><td><code>1</code></td><td>Backend replicas</td></tr>
+    <tr><td><code>neuroface.backend.aiModel</code></td><td><code>lbph</code></td><td>AI model (<code>lbph</code> / <code>dlib</code>)</td></tr>
+    <tr><td><code>neuroface.frontend.image.tag</code></td><td><code>latest</code></td><td>Frontend image tag</td></tr>
+    <tr><td><code>neuroface.frontend.replicas</code></td><td><code>1</code></td><td>Frontend replicas</td></tr>
+    <tr><td><code>neuroface.chat.enabled</code></td><td><code>true</code></td><td>Enable AI chat feature</td></tr>
+    <tr><td><code>neuroface.persistence.enabled</code></td><td><code>true</code></td><td>Enable persistent storage</td></tr>
+    <tr><td><code>neuroface.persistence.size</code></td><td><code>1Gi</code></td><td>PVC size</td></tr>
+    <tr><td><code>neuroface.route.enabled</code></td><td><code>true</code></td><td>Create NeuroFace Route</td></tr>
+  </tbody>
+</table>
 
-<h3>Route & Service</h3>
+<h3>Route &amp; Service</h3>
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `route.enabled` | `true` | Create RHBK OpenShift Route |
-| `route.tls.termination` | `edge` | TLS termination |
-| `service.type` | `ClusterIP` | Service type |
-| `service.httpPort` | `8080` | HTTP port |
-| `service.port` | `8443` | HTTPS port |
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>route.enabled</code></td><td><code>true</code></td><td>Create RHBK OpenShift Route</td></tr>
+    <tr><td><code>route.tls.termination</code></td><td><code>edge</code></td><td>TLS termination</td></tr>
+    <tr><td><code>service.type</code></td><td><code>ClusterIP</code></td><td>Service type</td></tr>
+    <tr><td><code>service.httpPort</code></td><td><code>8080</code></td><td>HTTP port</td></tr>
+    <tr><td><code>service.port</code></td><td><code>8443</code></td><td>HTTPS port</td></tr>
+  </tbody>
+</table>
 
 <h2>Realm Configuration</h2>
 
-The chart auto-imports a pre-configured realm:
-
-| Component | Details |
-|-----------|---------|
-| **Clients** | `neuroface-app` (public, PKCE S256), `neuroface-backend` (bearer-only) |
-| **Browser Flow** | `biometric browser` — cookie OR (password + facial 2FA) |
-| **Registration Flow** | `biometric registration` — delegated creation |
-| **Required Action** | `biometric-enrollment` — facial enrollment on first login |
-| **Roles** | `biometric-user`, `biometric-admin` |
-| **Group** | `biometric-enrolled` — auto-assigned after enrollment |
+<table>
+  <thead>
+    <tr><th>Component</th><th>Details</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Clients</strong></td><td><code>neuroface-app</code> (public, PKCE S256), <code>neuroface-backend</code> (bearer-only)</td></tr>
+    <tr><td><strong>Browser Flow</strong></td><td><code>biometric browser</code> — cookie OR (password + facial 2FA)</td></tr>
+    <tr><td><strong>Registration Flow</strong></td><td><code>biometric registration</code> — delegated creation</td></tr>
+    <tr><td><strong>Required Action</strong></td><td><code>biometric-enrollment</code> — facial enrollment on first login</td></tr>
+    <tr><td><strong>Roles</strong></td><td><code>biometric-user</code>, <code>biometric-admin</code></td></tr>
+    <tr><td><strong>Group</strong></td><td><code>biometric-enrolled</code> — auto-assigned after enrollment</td></tr>
+  </tbody>
+</table>
 
 <h2>SPI Components</h2>
 
-| Provider | Type | ID | Description |
-|----------|------|----|-------------|
-| BiometricAuthenticator | Authenticator | `biometric-authenticator` | 2FA via NeuroFace `/api/recognize` |
-| BiometricEnrollment | Required Action | `biometric-enrollment` | Multi-image facial enrollment |
-| NeuroFaceClient | Internal | — | HTTP client for NeuroFace REST API |
+<table>
+  <thead>
+    <tr><th>Provider</th><th>Type</th><th>ID</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>BiometricAuthenticator</td><td>Authenticator</td><td><code>biometric-authenticator</code></td><td>2FA via NeuroFace <code>/api/recognize</code></td></tr>
+    <tr><td>BiometricEnrollment</td><td>Required Action</td><td><code>biometric-enrollment</code></td><td>Multi-image facial enrollment</td></tr>
+    <tr><td>NeuroFaceClient</td><td>Internal</td><td>—</td><td>HTTP client for NeuroFace REST API</td></tr>
+  </tbody>
+</table>
 
 <h2>Links</h2>
 
@@ -300,6 +337,14 @@ The chart auto-imports a pre-configured realm:
 <div class="card">
   <h4>📖 RHBK Docs</h4>
   <p><a href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/26.0/">Red Hat Build of Keycloak 26.0 Documentation</a></p>
+</div>
+<div class="card">
+  <h4>🏗️ Artifact Hub — rhbk-neuroface</h4>
+  <p><a href="https://artifacthub.io/packages/helm/rhbk-neuroface/rhbk-neuroface">artifacthub.io/packages/helm/rhbk-neuroface</a></p>
+</div>
+<div class="card">
+  <h4>🏗️ Artifact Hub — neuroface</h4>
+  <p><a href="https://artifacthub.io/packages/helm/neuroface/neuroface">artifacthub.io/packages/helm/neuroface</a></p>
 </div>
 </div>
 
