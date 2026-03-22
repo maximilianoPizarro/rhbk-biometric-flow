@@ -1,0 +1,41 @@
+apiVersion: v2
+name: rhbk-neuroface
+description: Red Hat Build of Keycloak with NeuroFace biometric SPI integration
+type: application
+version: 1.0.0
+appVersion: "26.0"
+keywords:
+  - keycloak
+  - rhbk
+  - biometric
+  - facial-recognition
+  - neuroface
+  - sso
+  - openshift
+  - authentication
+home: https://github.com/maximilianoPizarro/rhbk-biometric-flow
+sources:
+  - https://github.com/maximilianoPizarro/rhbk-biometric-flow
+  - https://github.com/maximilianoPizarro/neuroface
+icon: https://maximilianopizarro.github.io/rhbk-biometric-flow/logo.png
+maintainers:
+  - name: maximilianoPizarro
+    email: maximiliano.pizarro.5@gmail.com
+    url: https://github.com/maximilianoPizarro
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: NeuroFace
+      url: https://github.com/maximilianoPizarro/neuroface
+    - name: RHBK Documentation
+      url: https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/26.0/
+  artifacthub.io/operator: "false"
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial release with biometric authentication SPI
+    - kind: added
+      description: Delegated user creation with facial enrollment
+    - kind: added
+      description: Second factor authentication via facial recognition

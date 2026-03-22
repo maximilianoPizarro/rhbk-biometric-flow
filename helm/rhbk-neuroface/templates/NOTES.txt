@@ -1,0 +1,29 @@
+=====================================================
+  RHBK NeuroFace Biometric - Deployment Complete
+=====================================================
+
+1. Admin Console:
+{{- if .Values.route.enabled }}
+   kubectl get route {{ include "rhbk-neuroface.fullname" . }} -o jsonpath='{.spec.host}'
+{{- else }}
+   kubectl port-forward svc/{{ include "rhbk-neuroface.fullname" . }} {{ .Values.service.httpPort }}:{{ .Values.service.httpPort }}
+   Open: http://localhost:{{ .Values.service.httpPort }}
+{{- end }}
+
+2. Temporary Admin Credentials:
+   Username: {{ .Values.admin.username }}
+   Password: {{ .Values.admin.password }}
+   WARNING: Change the admin password immediately after first login.
+
+3. Realm: {{ .Values.realm.name }}
+   Authentication flows configured:
+   - "biometric browser" → Login with password + facial recognition 2FA
+   - "biometric registration" → Delegated user creation with facial enrollment
+
+4. NeuroFace Backend Integration:
+   Internal URL: {{ include "rhbk-neuroface.neurofaceUrl" . }}
+   Ensure NeuroFace is deployed in the same namespace.
+
+5. Biometric Configuration:
+   Confidence Threshold: {{ .Values.biometric.confidenceThreshold }}
+   Max Enrollment Images: {{ .Values.biometric.maxEnrollmentImages }}

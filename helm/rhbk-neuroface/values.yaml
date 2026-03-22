@@ -1,0 +1,57 @@
+rhbk:
+  image:
+    repository: registry.redhat.io/rhbk/keycloak-rhel9
+    tag: "26.0"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+admin:
+  username: admin
+  password: admin
+  temporary: true
+
+realm:
+  name: neuroface
+  displayName: "NeuroFace Biometric"
+
+neuroface:
+  backendService: neuroface-backend
+  backendPort: 8080
+  internalUrl: ""
+
+spi:
+  image:
+    repository: quay.io/maximilianopizarro/rhbk-neuroface-spi
+    tag: latest
+    pullPolicy: Always
+
+biometric:
+  confidenceThreshold: 65.0
+  maxEnrollmentImages: 5
+  webcamWidth: 640
+  webcamHeight: 480
+
+route:
+  enabled: true
+  host: ""
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+service:
+  type: ClusterIP
+  port: 8443
+  httpPort: 8080
+
+persistence:
+  enabled: false
+
+postgresql:
+  enabled: false

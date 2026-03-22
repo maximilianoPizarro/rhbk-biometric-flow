@@ -1,0 +1,215 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rhbk-neuroface.fullname" . }}-realm
+  labels:
+    {{- include "rhbk-neuroface.labels" . | nindent 4 }}
+data:
+  neuroface-realm.json: |
+    {
+      "realm": {{ .Values.realm.name | quote }},
+      "displayName": {{ .Values.realm.displayName | quote }},
+      "enabled": true,
+      "sslRequired": "external",
+      "registrationAllowed": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "resetPasswordAllowed": true,
+      "editUsernameAllowed": false,
+      "bruteForceProtected": true,
+      "permanentLockout": false,
+      "maxFailureWaitSeconds": 900,
+      "minimumQuickLoginWaitSeconds": 60,
+      "waitIncrementSeconds": 60,
+      "quickLoginCheckMilliSeconds": 1000,
+      "maxDeltaTimeSeconds": 43200,
+      "failureFactor": 5,
+      "requiredActions": [
+        {
+          "alias": "biometric-enrollment",
+          "name": "Biometric Enrollment",
+          "providerId": "biometric-enrollment",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 100,
+          "config": {}
+        }
+      ],
+      "roles": {
+        "realm": [
+          {
+            "name": "biometric-user",
+            "description": "User with biometric enrollment completed"
+          },
+          {
+            "name": "biometric-admin",
+            "description": "Admin that can manage biometric enrollments"
+          }
+        ]
+      },
+      "groups": [
+        {
+          "name": "biometric-enrolled",
+          "realmRoles": ["biometric-user"]
+        }
+      ],
+      "clients": [
+        {
+          "clientId": "neuroface-app",
+          "name": "NeuroFace Application",
+          "enabled": true,
+          "publicClient": true,
+          "standardFlowEnabled": true,
+          "directAccessGrantsEnabled": true,
+          "serviceAccountsEnabled": false,
+          "authorizationServicesEnabled": false,
+          "redirectUris": [
+            "http://localhost:4200/*",
+            "https://*.apps.*.openshiftapps.com/*"
+          ],
+          "webOrigins": ["+"],
+          "protocol": "openid-connect",
+          "attributes": {
+            "pkce.code.challenge.method": "S256",
+            "post.logout.redirect.uris": "+"
+          },
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "clientId": "neuroface-backend",
+          "name": "NeuroFace Backend Service",
+          "enabled": true,
+          "bearerOnly": true,
+          "publicClient": false,
+          "protocol": "openid-connect"
+        }
+      ],
+      "authenticationFlows": [
+        {
+          "alias": "biometric browser",
+          "description": "Browser login with biometric second factor via NeuroFace",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticator": "auth-cookie",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 10,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "ALTERNATIVE",
+              "priority": 20,
+              "flowAlias": "biometric browser forms",
+              "userSetupAllowed": false,
+              "autheticatorFlow": true
+            }
+          ]
+        },
+        {
+          "alias": "biometric browser forms",
+          "description": "Username/password + biometric 2FA",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticator": "auth-username-password-form",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticator": "biometric-authenticator",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            }
+          ]
+        },
+        {
+          "alias": "biometric registration",
+          "description": "Delegated registration flow with biometric enrollment",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticatorFlow": true,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "flowAlias": "biometric registration form",
+              "userSetupAllowed": false,
+              "autheticatorFlow": true
+            }
+          ]
+        },
+        {
+          "alias": "biometric registration form",
+          "description": "Registration form with biometric capture",
+          "providerId": "form-flow",
+          "topLevel": false,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticator": "registration-user-creation",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticator": "registration-password-action",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticator": "registration-profile-action",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 30,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            }
+          ]
+        }
+      ],
+      "browserFlow": "biometric browser",
+      "registrationFlow": "biometric registration",
+      "clientAuthenticationFlow": "clients",
+      "smtpServer": {},
+      "eventsEnabled": true,
+      "eventsExpiration": 604800,
+      "eventsListeners": ["jboss-logging"],
+      "adminEventsEnabled": true,
+      "adminEventsDetailsEnabled": true,
+      "attributes": {
+        "neuroface.api.url": "{{ include "rhbk-neuroface.neurofaceUrl" . }}",
+        "neuroface.confidence.threshold": "{{ .Values.biometric.confidenceThreshold }}",
+        "neuroface.max.enrollment.images": "{{ .Values.biometric.maxEnrollmentImages }}"
+      }
+    }

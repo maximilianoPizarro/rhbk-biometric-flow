@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rhbk-neuroface.fullname" . }}
+  labels:
+    {{- include "rhbk-neuroface.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.rhbk.replicas }}
+  selector:
+    matchLabels:
+      {{- include "rhbk-neuroface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "rhbk-neuroface.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/realm: {{ include (print $.Template.BasePath "/configmap-realm.yaml") . | sha256sum }}
+        checksum/env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
+    spec:
+      initContainers:
+        - name: copy-spi
+          image: {{ .Values.spi.image.repository }}:{{ .Values.spi.image.tag }}
+          imagePullPolicy: {{ .Values.spi.image.pullPolicy }}
+          command: ["sh", "-c", "cp /opt/spi/*.jar /providers/"]
+          volumeMounts:
+            - name: providers
+              mountPath: /providers
+      containers:
+        - name: keycloak
+          image: {{ .Values.rhbk.image.repository }}:{{ .Values.rhbk.image.tag }}
+          imagePullPolicy: {{ .Values.rhbk.image.pullPolicy }}
+          args:
+            - start-dev
+            - --import-realm
+          env:
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
+          envFrom:
+            - secretRef:
+                name: {{ include "rhbk-neuroface.fullname" . }}-admin
+            - configMapRef:
+                name: {{ include "rhbk-neuroface.fullname" . }}-env
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+            - name: management
+              containerPort: 9000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: management
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: management
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          resources:
+            {{- toYaml .Values.rhbk.resources | nindent 12 }}
+          volumeMounts:
+            - name: providers
+              mountPath: /opt/keycloak/providers
+            - name: realm-config
+              mountPath: /opt/keycloak/data/import
+      volumes:
+        - name: providers
+          emptyDir: {}
+        - name: realm-config
+          configMap:
+            name: {{ include "rhbk-neuroface.fullname" . }}-realm
