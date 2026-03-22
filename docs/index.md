@@ -112,6 +112,46 @@ title: RHBK NeuroFace Biometric Flow
   <div class="caption">Helm Chart Catalog — NeuroFace dependency chart</div>
 </div>
 
+<div class="screenshot">
+  <img src="neuroface-biometric.png" alt="NeuroFace Biometric Enrollment" />
+  <div class="caption">Biometric Enrollment — Webcam facial capture during delegated user creation</div>
+</div>
+
+<div class="screenshot">
+  <img src="neuroface-biometric-test.png" alt="NeuroFace Biometric Test" />
+  <div class="caption">Biometric 2FA Test — Facial recognition verification during login</div>
+</div>
+
+<div class="screenshot">
+  <img src="neuroface-biometric-test-2.png" alt="NeuroFace Biometric Test Result" />
+  <div class="caption">Biometric Verification Result — Identity confirmed via NeuroFace</div>
+</div>
+
+<div class="screenshot">
+  <img src="training.png" alt="NeuroFace Training — Image Upload" />
+  <div class="caption">Training — Uploading facial images to the NeuroFace model for a new user</div>
+</div>
+
+<div class="screenshot">
+  <img src="training-success.png" alt="NeuroFace Training — Success" />
+  <div class="caption">Training Complete — Model successfully trained with the uploaded facial data</div>
+</div>
+
+<div class="screenshot">
+  <img src="training%20test.png" alt="NeuroFace Training Test" />
+  <div class="caption">Recognition Test — Verifying facial identity against the trained model</div>
+</div>
+
+<div class="screenshot">
+  <img src="training%20test%20two.png" alt="NeuroFace Training Test Two" />
+  <div class="caption">Recognition Test — Multi-face detection and label matching in real time</div>
+</div>
+
+<div class="screenshot">
+  <img src="ia%20chat.png" alt="NeuroFace AI Chat" />
+  <div class="caption">AI Chat — Facial analysis assistant powered by Granite LLM integration</div>
+</div>
+
 <h2>NeuroFace — Facial Recognition Service</h2>
 
 <p>
