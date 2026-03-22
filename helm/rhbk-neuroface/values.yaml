@@ -27,6 +27,61 @@ neuroface:
   backendPort: 8080
   internalUrl: ""
 
+  # -- NeuroFace subchart default values (override as needed)
+  backend:
+    image:
+      repository: quay.io/maximilianopizarro/neuroface-backend
+      tag: latest
+      pullPolicy: Always
+    replicas: 1
+    port: 8080
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    aiModel: lbph
+    dlibEnabled: false
+
+  frontend:
+    image:
+      repository: quay.io/maximilianopizarro/neuroface-frontend
+      tag: latest
+      pullPolicy: Always
+    replicas: 1
+    port: 8080
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+  chat:
+    enabled: true
+    modelEndpoint: "https://isvc-granite-31-8b-fp8-predictor.sandbox-shared-models.svc.cluster.local:8443"
+    modelName: "isvc-granite-31-8b-fp8"
+    apiKey: ""
+    autoServiceAccount: true
+    maxTokens: 512
+    systemPrompt: "You are a facial analysis assistant. Analyze the provided facial detection data and answer questions about expressions, characteristics, and features of the detected faces. Be concise and informative."
+
+  route:
+    enabled: true
+    host: ""
+    tls:
+      termination: edge
+
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClassName: ""
+    accessModes:
+      - ReadWriteOnce
+
 spi:
   image:
     repository: quay.io/maximilianopizarro/rhbk-neuroface-spi
