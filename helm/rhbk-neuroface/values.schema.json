@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "RHBK NeuroFace Biometric Flow Helm Values",
+  "description": "Schema for rhbk-neuroface Helm chart values",
+  "properties": {
+    "rhbk": {
+      "type": "object",
+      "description": "Red Hat Build of Keycloak configuration",
+      "properties": {
+        "image": {
+          "type": "object",
+          "properties": {
+            "repository": {
+              "type": "string",
+              "description": "RHBK container image repository",
+              "default": "registry.redhat.io/rhbk/keycloak-rhel9"
+            },
+            "tag": {
+              "type": "string",
+              "description": "Image tag",
+              "default": "26.0"
+            },
+            "pullPolicy": {
+              "type": "string",
+              "description": "Image pull policy",
+              "enum": ["Always", "IfNotPresent", "Never"],
+              "default": "IfNotPresent"
+            }
+          },
+          "required": ["repository", "tag"]
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of RHBK replicas",
+          "minimum": 1,
+          "default": 1
+        },
+        "resources": {
+          "type": "object",
+          "description": "CPU/memory resource requests and limits",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": { "type": "string" },
+                "memory": { "type": "string" }
+              }
+            },
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": { "type": "string" },
+                "memory": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "required": ["image"]
+    },
+    "admin": {
+      "type": "object",
+      "description": "Bootstrap admin credentials (temporary)",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Admin username",
+          "default": "admin"
+        },
+        "password": {
+          "type": "string",
+          "description": "Admin password — change immediately after first login",
+          "default": "admin",
+          "minLength": 4
+        },
+        "temporary": {
+          "type": "boolean",
+          "description": "Whether the admin credentials are temporary",
+          "default": true
+        }
+      },
+      "required": ["username", "password"]
+    },
+    "realm": {
+      "type": "object",
+      "description": "Keycloak realm configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Realm name",
+          "default": "neuroface",
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Realm display name shown in the login UI",
+          "default": "NeuroFace Biometric"
+        }
+      },
+      "required": ["name"]
+    },
+    "neuroface": {
+      "type": "object",
+      "description": "NeuroFace subchart and backend connection settings",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Deploy the NeuroFace subchart (set false if already deployed)",
+          "default": true
+        },
+        "backendService": {
+          "type": "string",
+          "description": "Kubernetes service name of the NeuroFace backend",
+          "default": "neuroface-backend"
+        },
+        "backendPort": {
+          "type": "integer",
+          "description": "Port of the NeuroFace backend service",
+          "default": 8080,
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "internalUrl": {
+          "type": "string",
+          "description": "Full internal URL override (e.g. http://my-svc:8080/api). Leave empty to auto-generate from backendService and backendPort"
+        },
+        "backend": {
+          "type": "object",
+          "description": "Override values for the NeuroFace backend subchart",
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "repository": { "type": "string" },
+                "tag": { "type": "string" },
+                "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+              }
+            },
+            "replicas": { "type": "integer", "minimum": 1 },
+            "port": { "type": "integer" },
+            "resources": { "type": "object" },
+            "aiModel": {
+              "type": "string",
+              "description": "AI model type for facial recognition",
+              "enum": ["lbph", "dlib"],
+              "default": "lbph"
+            },
+            "dlibEnabled": { "type": "boolean", "default": false }
+          }
+        },
+        "frontend": {
+          "type": "object",
+          "description": "Override values for the NeuroFace frontend subchart",
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "repository": { "type": "string" },
+                "tag": { "type": "string" },
+                "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+              }
+            },
+            "replicas": { "type": "integer", "minimum": 1 },
+            "resources": { "type": "object" }
+          }
+        },
+        "chat": {
+          "type": "object",
+          "description": "Override values for the NeuroFace chat feature",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "modelEndpoint": { "type": "string" },
+            "modelName": { "type": "string" },
+            "apiKey": { "type": "string" },
+            "maxTokens": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "persistence": {
+          "type": "object",
+          "description": "Override values for NeuroFace persistence",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "size": { "type": "string", "default": "1Gi" },
+            "storageClassName": { "type": "string" }
+          }
+        },
+        "route": {
+          "type": "object",
+          "description": "Override values for the NeuroFace OpenShift Route",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "host": { "type": "string" }
+          }
+        }
+      },
+      "required": ["enabled"]
+    },
+    "spi": {
+      "type": "object",
+      "description": "Biometric SPI init-container image",
+      "properties": {
+        "image": {
+          "type": "object",
+          "properties": {
+            "repository": {
+              "type": "string",
+              "description": "SPI container image repository",
+              "default": "quay.io/maximilianopizarro/rhbk-neuroface-spi"
+            },
+            "tag": {
+              "type": "string",
+              "description": "SPI image tag",
+              "default": "latest"
+            },
+            "pullPolicy": {
+              "type": "string",
+              "enum": ["Always", "IfNotPresent", "Never"],
+              "default": "Always"
+            }
+          },
+          "required": ["repository", "tag"]
+        }
+      },
+      "required": ["image"]
+    },
+    "biometric": {
+      "type": "object",
+      "description": "Biometric facial recognition settings",
+      "properties": {
+        "confidenceThreshold": {
+          "type": "number",
+          "description": "Minimum confidence score (0-100) to accept a facial match",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 65.0
+        },
+        "maxEnrollmentImages": {
+          "type": "integer",
+          "description": "Maximum number of facial images captured during enrollment",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5
+        },
+        "webcamWidth": {
+          "type": "integer",
+          "description": "Webcam capture width in pixels",
+          "default": 640
+        },
+        "webcamHeight": {
+          "type": "integer",
+          "description": "Webcam capture height in pixels",
+          "default": 480
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "description": "OpenShift Route for RHBK",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Create an OpenShift Route",
+          "default": true
+        },
+        "host": {
+          "type": "string",
+          "description": "Custom hostname (leave empty for auto-generated)"
+        },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "termination": {
+              "type": "string",
+              "enum": ["edge", "passthrough", "reencrypt"],
+              "default": "edge"
+            },
+            "insecureEdgeTerminationPolicy": {
+              "type": "string",
+              "enum": ["Allow", "Redirect", "None"],
+              "default": "Redirect"
+            }
+          }
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "description": "Kubernetes Service for RHBK",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer"],
+          "default": "ClusterIP"
+        },
+        "port": {
+          "type": "integer",
+          "description": "HTTPS service port",
+          "default": 8443
+        },
+        "httpPort": {
+          "type": "integer",
+          "description": "HTTP service port",
+          "default": 8080
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false }
+      }
+    },
+    "postgresql": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false }
+      }
+    }
+  },
+  "required": ["rhbk", "admin", "realm", "neuroface", "spi", "biometric"]
+}
