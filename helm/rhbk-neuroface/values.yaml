@@ -22,6 +22,7 @@ realm:
   displayName: "NeuroFace Biometric"
 
 neuroface:
+  enabled: true
   backendService: neuroface-backend
   backendPort: 8080
   internalUrl: ""
