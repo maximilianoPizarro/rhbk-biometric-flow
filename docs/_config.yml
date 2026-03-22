@@ -1,0 +1,13 @@
+title: RHBK NeuroFace Biometric Flow
+description: Red Hat Build of Keycloak with biometric facial recognition via NeuroFace
+baseurl: "/rhbk-biometric-flow"
+url: "https://maximilianopizarro.github.io"
+theme: null
+plugins: []
+markdown: kramdown
+kramdown:
+  input: GFM
+exclude:
+  - "*.tgz"
+  - index.yaml
+  - artifacthub-repo.yml

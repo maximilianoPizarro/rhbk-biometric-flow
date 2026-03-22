@@ -1,38 +1,75 @@
-# RHBK NeuroFace Biometric Flow
-
-<p align="center">
-  <img src="logo.png" alt="Keycloak Logo" width="128" />
-</p>
-
-<p align="center">
-  <strong>Red Hat Build of Keycloak + NeuroFace Biometric Authentication</strong><br/>
-  Helm chart &middot; v1.0.0 &middot; App version 26.0
-</p>
-
-<p align="center">
-  <a href="https://github.com/maximilianoPizarro/rhbk-biometric-flow">GitHub</a> &middot;
-  <a href="https://github.com/maximilianoPizarro/neuroface">NeuroFace</a> &middot;
-  <a href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/26.0/">RHBK Docs</a>
-</p>
-
+---
+layout: default
+title: RHBK NeuroFace Biometric Flow
 ---
 
-## Overview
+<div class="hero">
+  <img src="logo.png" alt="Keycloak" class="logo" />
+  <h1>RHBK NeuroFace Biometric Flow</h1>
+  <p class="subtitle">
+    Red Hat Build of Keycloak with biometric facial recognition authentication via NeuroFace
+  </p>
+  <div class="badges">
+    <span class="badge badge-red">RHBK 26.0</span>
+    <span class="badge badge-blue">Keycloak SPI</span>
+    <span class="badge badge-gold">Facial 2FA</span>
+    <span class="badge badge-cyan">OpenShift</span>
+  </div>
+</div>
 
-A Helm chart that deploys **Red Hat Build of Keycloak (RHBK) 26** with a custom SPI provider for **biometric facial recognition** powered by the [NeuroFace](https://github.com/maximilianoPizarro/neuroface) service.
+<div class="container">
 
-The chart enables two key authentication scenarios:
+<h2>Demo Videos</h2>
 
-| Scenario | Description |
-|----------|-------------|
-| **Delegated Creation with Biometric Enrollment** | An admin creates a user and assigns the biometric enrollment required action. On first login, the user captures facial images via webcam, which are sent to NeuroFace for training. |
-| **Second Factor Authentication (2FA) via Facial Recognition** | After password-based authentication, the user is prompted for a webcam facial scan. The image is verified against the trained NeuroFace model. |
+<div class="video-section">
+<div class="video-grid">
 
----
+<div class="video-card">
+  <div class="video-wrapper shorts">
+    <iframe src="https://www.youtube.com/embed/_PcsflxvJWY" title="RHBK Biometric Flow - Short Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="video-info">
+    <h4>Biometric Authentication Flow</h4>
+    <p>Quick demo of the delegated creation and 2FA facial recognition flow with RHBK and NeuroFace</p>
+  </div>
+</div>
 
-## Architecture
+<div class="video-card">
+  <div class="video-wrapper">
+    <iframe src="https://www.youtube.com/embed/lvFu5u7slXg" title="NeuroFace - Facial Recognition Usage" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="video-info">
+    <h4>NeuroFace — Facial Recognition in Action</h4>
+    <p>Full walkthrough of the NeuroFace webapp: training, recognition, and model configuration</p>
+  </div>
+</div>
 
-```
+</div>
+</div>
+
+<h2>Overview</h2>
+
+<div class="card-grid">
+<div class="card">
+  <div class="icon">🔐</div>
+  <h4>Delegated Creation + Biometric Enrollment</h4>
+  <p>Admin creates users in Keycloak. On first login, users enroll their face via webcam — 3 to 5 captures from different angles sent to NeuroFace for model training.</p>
+</div>
+<div class="card">
+  <div class="icon">👤</div>
+  <h4>Second Factor Authentication (2FA)</h4>
+  <p>After password login, users verify their identity through facial recognition. The SPI calls NeuroFace <code>/api/recognize</code> and matches against the enrolled profile.</p>
+</div>
+<div class="card">
+  <div class="icon">📦</div>
+  <h4>Single Helm Install</h4>
+  <p>One <code>helm install</code> deploys both RHBK and NeuroFace in the same namespace with pre-configured realm, clients, flows, and roles.</p>
+</div>
+</div>
+
+<h2>Architecture</h2>
+
+<div class="arch-diagram"><pre>
 ┌─────────────────────────────────┐     ┌──────────────────────────────────┐
 │  RHBK (Keycloak 26 - UBI9)     │     │  NeuroFace Backend (FastAPI)     │
 │                                 │     │                                  │
@@ -51,51 +88,96 @@ The chart enables two key authentication scenarios:
 │  Flow: biometric browser        │     └──────────────────────────────────┘
 │  Flow: biometric registration   │
 └─────────────────────────────────┘
-```
+</pre></div>
 
----
+<h2>Screenshots</h2>
 
-## Components
+<div class="screenshot">
+  <img src="neuroface.png" alt="NeuroFace Application" />
+  <div class="caption">NeuroFace — Facial Recognition Webapp with ML (OpenCV LBPH / dlib)</div>
+</div>
 
-### Keycloak SPI Provider
+<div class="screenshot">
+  <img src="topology.png" alt="OpenShift Topology" />
+  <div class="caption">OpenShift Topology — RHBK + NeuroFace deployed in the same namespace</div>
+</div>
 
-The custom SPI JAR is loaded into RHBK via an init-container and provides:
+<div class="screenshot">
+  <img src="helm%20catalog.png" alt="Helm Catalog" />
+  <div class="caption">Helm Chart Catalog — rhbk-neuroface available on Artifact Hub</div>
+</div>
 
-| Provider | Type | ID | Description |
-|----------|------|----|-------------|
-| **BiometricAuthenticator** | Authenticator | `biometric-authenticator` | Second factor that verifies the user's face via NeuroFace `/api/recognize` |
-| **BiometricEnrollment** | Required Action | `biometric-enrollment` | Captures multiple facial images and trains the NeuroFace model on first login |
-| **NeuroFaceClient** | Internal | — | HTTP client that communicates with the NeuroFace REST API |
+<div class="screenshot">
+  <img src="helm%20catalog%20neuroface.png" alt="Helm Catalog NeuroFace" />
+  <div class="caption">Helm Chart Catalog — NeuroFace dependency chart</div>
+</div>
 
-### Realm Configuration
+<h2>NeuroFace — Facial Recognition Service</h2>
 
-The chart imports a pre-configured `neuroface` realm with:
+<p>
+  <a href="https://github.com/maximilianoPizarro/neuroface" target="_blank">NeuroFace</a> is a facial recognition webapp built with <strong>FastAPI</strong> and <strong>Angular 17</strong>, containerized with Red Hat UBI9 certified images. It provides the ML backend that powers the biometric authentication.
+</p>
 
-- **Clients**: `neuroface-app` (public, PKCE S256) and `neuroface-backend` (bearer-only)
-- **Authentication flows**: `biometric browser` (password + facial 2FA) and `biometric registration` (delegated creation)
-- **Roles**: `biometric-user`, `biometric-admin`
-- **Group**: `biometric-enrolled` (auto-assigned after successful enrollment)
-- **Required action**: `biometric-enrollment` (assignable to users by admins)
+<h3>API Endpoints Used by the SPI</h3>
 
-### FreeMarker Templates
+| Endpoint | Method | Usage |
+|----------|--------|-------|
+| `/api/health` | `GET` | Health check before biometric operations |
+| `/api/images` | `POST` | Upload facial images during enrollment (multipart) |
+| `/api/train` | `POST` | Train the recognition model after enrollment |
+| `/api/recognize` | `POST` | Verify facial identity during 2FA login |
+| `/api/labels` | `GET` | List registered biometric labels |
 
-| Template | Screen | Description |
-|----------|--------|-------------|
-| `biometric-login.ftl` | 2FA Verification | Webcam capture with face-guide overlay, single-shot capture and submit |
-| `biometric-enroll.ftl` | Enrollment | Multi-image capture (3-5 shots) with angle guidance, thumbnails, and progress counter |
+<h2>Authentication Flows</h2>
 
----
+<h3>1. Delegated Creation with Biometric Enrollment</h3>
 
-## Quick Start
+<div class="arch-diagram"><pre>
+KC Admin ──► Creates user ──► Assigns Required Action "Biometric Enrollment"
+                                          │
+                                          ▼
+                               User logs in with
+                               temporary credentials
+                                          │
+                                          ▼
+                               Webcam: captures 3-5 images
+                               from different angles
+                                          │
+                                          ▼
+                               SPI → POST /api/images (label=username)
+                               SPI → POST /api/train
+                                          │
+                                          ▼
+                               biometric_enrolled = true
+                               User joins group "biometric-enrolled"
+</pre></div>
 
-### Prerequisites
+<h3>2. Login with Biometric Second Factor (2FA)</h3>
 
-- OpenShift 4.x or Kubernetes 1.25+
-- Helm 3.x
-- NeuroFace deployed in the same namespace
-- Red Hat registry access (`podman login registry.redhat.io`)
+<div class="arch-diagram"><pre>
+User ──► Login page ──► username + password
+                                │
+                                ▼
+                       Biometric verification (2FA)
+                       Webcam captures facial image
+                                │
+                                ▼
+                       SPI → POST /api/recognize { "image": base64 }
+                                │
+                                ▼
+                       label == username AND
+                       confidence >= threshold?
+                          │              │
+                         YES             NO
+                          ▼              ▼
+                       Access         Access
+                       granted        denied
+</pre></div>
 
-### Install
+<h2>Quick Start</h2>
+
+<div class="install-box">
+<h4>From Helm Repository</h4>
 
 ```bash
 helm repo add rhbk-neuroface https://maximilianopizarro.github.io/rhbk-biometric-flow/
@@ -105,58 +187,120 @@ helm install rhbk-neuroface rhbk-neuroface/rhbk-neuroface \
   -n neuroface --create-namespace \
   --set admin.password=changeme
 ```
+</div>
 
-### From source
+<div class="install-box">
+<h4>From Source</h4>
 
 ```bash
 git clone https://github.com/maximilianoPizarro/rhbk-biometric-flow.git
 cd rhbk-biometric-flow
 
+helm dependency update helm/rhbk-neuroface
 helm install rhbk-neuroface ./helm/rhbk-neuroface \
   -n neuroface --create-namespace \
   --set admin.password=changeme
 ```
+</div>
 
----
+<h2>Helm Chart Values</h2>
 
-## Configuration
+<h3>RHBK (Keycloak)</h3>
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `rhbk.image.repository` | RHBK container image | `registry.redhat.io/rhbk/keycloak-rhel9` |
-| `rhbk.image.tag` | Image tag | `26.0` |
-| `admin.username` | Bootstrap admin username | `admin` |
-| `admin.password` | Bootstrap admin password | `admin` |
-| `realm.name` | Realm name | `neuroface` |
-| `neuroface.backendService` | NeuroFace K8s service name | `neuroface-backend` |
-| `neuroface.backendPort` | NeuroFace service port | `8080` |
-| `biometric.confidenceThreshold` | Minimum confidence score (0-100) | `65.0` |
-| `biometric.maxEnrollmentImages` | Max facial images during enrollment | `5` |
-| `spi.image.repository` | SPI init-container image | `quay.io/maximilianopizarro/rhbk-neuroface-spi` |
-| `route.enabled` | Create an OpenShift Route | `true` |
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `rhbk.image.repository` | `registry.redhat.io/rhbk/keycloak-rhel9` | RHBK image |
+| `rhbk.image.tag` | `26.0` | Image tag |
+| `rhbk.replicas` | `1` | Replicas |
+| `rhbk.resources.limits.cpu` | `1` | CPU limit |
+| `rhbk.resources.limits.memory` | `1Gi` | Memory limit |
 
----
+<h3>Admin & Realm</h3>
 
-## NeuroFace API Integration
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `admin.username` | `admin` | Bootstrap admin user |
+| `admin.password` | `admin` | Bootstrap admin password |
+| `realm.name` | `neuroface` | Realm name |
+| `realm.displayName` | `NeuroFace Biometric` | Display name |
 
-The SPI communicates with the NeuroFace backend over the internal Kubernetes network:
+<h3>Biometric Settings</h3>
 
-| Endpoint | Method | Used For |
-|----------|--------|----------|
-| `/api/health` | GET | Health check before any biometric operation |
-| `/api/images` | POST | Upload facial images during enrollment (multipart) |
-| `/api/train` | POST | Train the recognition model after enrollment |
-| `/api/recognize` | POST | Verify facial identity during 2FA login |
-| `/api/labels` | GET | List registered biometric labels |
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `biometric.confidenceThreshold` | `65.0` | Minimum confidence (0-100) |
+| `biometric.maxEnrollmentImages` | `5` | Max enrollment images |
+| `biometric.webcamWidth` | `640` | Webcam width (px) |
+| `biometric.webcamHeight` | `480` | Webcam height (px) |
 
----
+<h3>SPI Image</h3>
 
-## Links
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `spi.image.repository` | `quay.io/maximilianopizarro/rhbk-neuroface-spi` | SPI image |
+| `spi.image.tag` | `latest` | Tag |
 
-- **Source code**: [github.com/maximilianoPizarro/rhbk-biometric-flow](https://github.com/maximilianoPizarro/rhbk-biometric-flow)
-- **NeuroFace**: [github.com/maximilianoPizarro/neuroface](https://github.com/maximilianoPizarro/neuroface)
-- **RHBK Documentation**: [docs.redhat.com/en/documentation/red_hat_build_of_keycloak/26.0](https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/26.0/)
+<h3>NeuroFace Subchart Overrides</h3>
 
-## License
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `neuroface.enabled` | `true` | Deploy NeuroFace subchart |
+| `neuroface.backend.image.tag` | `latest` | Backend image tag |
+| `neuroface.backend.replicas` | `1` | Backend replicas |
+| `neuroface.backend.aiModel` | `lbph` | AI model (`lbph` / `dlib`) |
+| `neuroface.frontend.image.tag` | `latest` | Frontend image tag |
+| `neuroface.frontend.replicas` | `1` | Frontend replicas |
+| `neuroface.chat.enabled` | `true` | Enable AI chat feature |
+| `neuroface.persistence.enabled` | `true` | Enable persistent storage |
+| `neuroface.persistence.size` | `1Gi` | PVC size |
+| `neuroface.route.enabled` | `true` | Create NeuroFace Route |
 
-Apache License 2.0
+<h3>Route & Service</h3>
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `route.enabled` | `true` | Create RHBK OpenShift Route |
+| `route.tls.termination` | `edge` | TLS termination |
+| `service.type` | `ClusterIP` | Service type |
+| `service.httpPort` | `8080` | HTTP port |
+| `service.port` | `8443` | HTTPS port |
+
+<h2>Realm Configuration</h2>
+
+The chart auto-imports a pre-configured realm:
+
+| Component | Details |
+|-----------|---------|
+| **Clients** | `neuroface-app` (public, PKCE S256), `neuroface-backend` (bearer-only) |
+| **Browser Flow** | `biometric browser` — cookie OR (password + facial 2FA) |
+| **Registration Flow** | `biometric registration` — delegated creation |
+| **Required Action** | `biometric-enrollment` — facial enrollment on first login |
+| **Roles** | `biometric-user`, `biometric-admin` |
+| **Group** | `biometric-enrolled` — auto-assigned after enrollment |
+
+<h2>SPI Components</h2>
+
+| Provider | Type | ID | Description |
+|----------|------|----|-------------|
+| BiometricAuthenticator | Authenticator | `biometric-authenticator` | 2FA via NeuroFace `/api/recognize` |
+| BiometricEnrollment | Required Action | `biometric-enrollment` | Multi-image facial enrollment |
+| NeuroFaceClient | Internal | — | HTTP client for NeuroFace REST API |
+
+<h2>Links</h2>
+
+<div class="card-grid">
+<div class="card">
+  <h4>📂 Source Code</h4>
+  <p><a href="https://github.com/maximilianoPizarro/rhbk-biometric-flow">github.com/maximilianoPizarro/rhbk-biometric-flow</a></p>
+</div>
+<div class="card">
+  <h4>🧠 NeuroFace</h4>
+  <p><a href="https://github.com/maximilianoPizarro/neuroface">github.com/maximilianoPizarro/neuroface</a></p>
+</div>
+<div class="card">
+  <h4>📖 RHBK Docs</h4>
+  <p><a href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/26.0/">Red Hat Build of Keycloak 26.0 Documentation</a></p>
+</div>
+</div>
+
+</div>
