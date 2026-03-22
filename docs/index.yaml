@@ -20,14 +20,14 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: "26.0"
-    created: "2026-03-22T14:48:09.5590468-03:00"
+    created: "2026-03-22T14:51:52.0772176-03:00"
     dependencies:
     - condition: neuroface.enabled
       name: neuroface
       repository: https://maximilianopizarro.github.io/neuroface/
       version: 1.0.1
     description: Red Hat Build of Keycloak with NeuroFace biometric SPI integration
-    digest: 079ebc541f0b31355b77116f1ae18e78b027407ee0308d28aa4b22f2b7e05f0c
+    digest: 4a9ab2db522db661e209798331c3661c2950c793e581ffe8c8094dd363c6d033
     home: https://github.com/maximilianoPizarro/rhbk-biometric-flow
     icon: https://maximilianopizarro.github.io/rhbk-biometric-flow/logo.png
     keywords:
@@ -51,4 +51,4 @@ entries:
     urls:
     - https://maximilianopizarro.github.io/rhbk-biometric-flow/rhbk-neuroface-1.0.0.tgz
     version: 1.0.0
-generated: "2026-03-22T14:48:09.5574607-03:00"
+generated: "2026-03-22T14:51:52.0749764-03:00"

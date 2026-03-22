@@ -40,12 +40,26 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+NeuroFace backend service name.
+When the subchart is enabled, the service is named "<release>-backend"
+(the subchart's fullname helper sees "neuroface" is contained in the release name).
+When disabled, use the explicit backendService value.
+*/}}
+{{- define "rhbk-neuroface.neurofaceBackendService" -}}
+{{- if and .Values.neuroface.enabled (not .Values.neuroface.internalUrl) }}
+{{- printf "%s-backend" .Release.Name }}
+{{- else }}
+{{- .Values.neuroface.backendService }}
+{{- end }}
+{{- end }}
+
+{{/*
 NeuroFace backend internal URL
 */}}
 {{- define "rhbk-neuroface.neurofaceUrl" -}}
 {{- if .Values.neuroface.internalUrl }}
 {{- .Values.neuroface.internalUrl }}
 {{- else }}
-{{- printf "http://%s:%d/api" .Values.neuroface.backendService (int .Values.neuroface.backendPort) }}
+{{- printf "http://%s:%d/api" (include "rhbk-neuroface.neurofaceBackendService" .) (int .Values.neuroface.backendPort) }}
 {{- end }}
 {{- end }}
