@@ -7,7 +7,7 @@ plugins: []
 markdown: kramdown
 kramdown:
   input: GFM
-exclude:
+include:
   - "*.tgz"
   - index.yaml
   - artifacthub-repo.yml
